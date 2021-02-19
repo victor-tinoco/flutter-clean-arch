@@ -15,6 +15,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   HomeController _controller;
   Map<FutureStatus, Widget Function()> _states;
+  ReactionDisposer _onUserRequestChangesReactionDispose;
 
   @override
   void initState() {
@@ -27,7 +28,16 @@ class _HomePageState extends State<HomePage> {
       FutureStatus.pending: _buildLoading
     };
 
-    reaction((_) => _controller.usersRequest.status, _onUserRequestChanges);
+    _onUserRequestChangesReactionDispose = reaction(
+      (_) => _controller.usersRequest.status,
+      _onUserRequestChanges,
+    );
+  }
+
+  @override
+  void dispose() {
+    _onUserRequestChangesReactionDispose();
+    super.dispose();
   }
 
   void _onUserRequestChanges(FutureStatus status) {
